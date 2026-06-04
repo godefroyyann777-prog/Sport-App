@@ -41,8 +41,10 @@
       <label>Nom équipe</label>
       <input id="teamAName" placeholder="Équipe A">
 
-      <label>🎨 Sélectionner la couleur</label>
-      <input type="color" id="teamAColor" value="#3b82f6">
+      <label>🎨 Couleur équipe</label>
+      <div class="color-box" id="teamAColorBox" onclick="pickColor('A')">
+        Sélectionner la couleur
+      </div>
 
       <div class="player-form">
         <input id="inputAName" placeholder="Nom joueur">
@@ -61,8 +63,10 @@
       <label>Nom équipe</label>
       <input id="teamBName" placeholder="Équipe B">
 
-      <label>🎨 Sélectionner la couleur</label>
-      <input type="color" id="teamBColor" value="#ef4444">
+      <label>🎨 Couleur équipe</label>
+      <div class="color-box" id="teamBColorBox" onclick="pickColor('B')">
+        Sélectionner la couleur
+      </div>
 
       <div class="player-form">
         <input id="inputBName" placeholder="Nom joueur">
