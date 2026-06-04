@@ -27,7 +27,22 @@ function selectSport(sport) {
   show("teams");
 }
 
-// PLAYERS
+// COULEUR VIA TEXTE
+function pickColor(team) {
+  const color = prompt("Entrez une couleur hex (#3b82f6)");
+  if (!color) return;
+
+  data.teams[team].color = color;
+
+  const box = document.getElementById(
+    team === "A" ? "teamAColorBox" : "teamBColorBox"
+  );
+
+  box.style.background = color;
+  box.style.color = "white";
+}
+
+// JOUEURS
 function isNumberUsed(team, number) {
   return data.teams[team].players.some(p => Number(p.number) === Number(number));
 }
@@ -38,7 +53,7 @@ function addPlayer(team) {
   const number = document.getElementById(`input${team}Number`).value.trim();
 
   if (!name || !number) {
-    alert("Nom et numéro obligatoires");
+    alert("Nom + numéro obligatoires");
     return;
   }
 
@@ -62,22 +77,15 @@ function addPlayer(team) {
 
 function renderPlayers() {
   document.getElementById("listA").innerHTML =
-    data.teams.A.players.map(p => `<li>#${p.number} - ${p.name}</li>`).join("");
+    data.teams.A.players.map(p =>
+      `<li>#${p.number} - ${p.name}</li>`
+    ).join("");
 
   document.getElementById("listB").innerHTML =
-    data.teams.B.players.map(p => `<li>#${p.number} - ${p.name}</li>`).join("");
+    data.teams.B.players.map(p =>
+      `<li>#${p.number} - ${p.name}</li>`
+    ).join("");
 }
-
-// COLORS
-document.getElementById("teamAColor").addEventListener("input", e => {
-  data.teams.A.color = e.target.value;
-  document.getElementById("teamABox").style.background = data.teams.A.color;
-});
-
-document.getElementById("teamBColor").addEventListener("input", e => {
-  data.teams.B.color = e.target.value;
-  document.getElementById("teamBBox").style.background = data.teams.B.color;
-});
 
 // VALIDATION
 function goToTime() {
@@ -93,7 +101,7 @@ function goToTime() {
   show("time");
 }
 
-// MATCH CONFIG
+// MATCH
 function goToDashboard() {
 
   const periodTime = document.getElementById("periodTime").value;
@@ -115,6 +123,7 @@ function goToDashboard() {
 // CHRONO
 function start() {
   if (running) return;
+
   running = true;
 
   interval = setInterval(() => {
@@ -144,7 +153,7 @@ function updateChrono() {
   if (el) el.innerText = `${m}:${s}`;
 }
 
-// GOALS
+// BUTS (UNIQUEMENT DASHBOARD)
 function addGoal(team, number) {
   const key = `${team}-${number}`;
   goals[key] = (goals[key] || 0) + 1;
@@ -156,7 +165,7 @@ function renderDashboard() {
 
   document.getElementById("display").innerHTML = `
 
-    <div style="text-align:center;font-size:40px;" id="chrono">00:00</div>
+    <div style="text-align:center;font-size:42px;" id="chrono">00:00</div>
 
     <div style="text-align:center;margin:10px;">
       <button onclick="start()">▶️ Start</button>
@@ -168,18 +177,28 @@ function renderDashboard() {
 
       <div style="flex:1;background:${data.teams.A.color};padding:10px;border-radius:10px;">
         <h3>${data.teams.A.name}</h3>
-        ${data.teams.A.players.map(p =>
-          `<div>#${p.number} ${p.name} - ⚽ ${goals[`A-${p.number}`] || 0}
-          <button onclick="addGoal('A','${p.number}')">+ but</button></div>`
-        ).join("")}
+
+        ${data.teams.A.players.map(p => `
+          <div>
+            #${p.number} ${p.name}
+            ⚽ ${goals[`A-${p.number}`] || 0}
+            <button onclick="addGoal('A','${p.number}')">+ but</button>
+          </div>
+        `).join("")}
+
       </div>
 
       <div style="flex:1;background:${data.teams.B.color};padding:10px;border-radius:10px;">
         <h3>${data.teams.B.name}</h3>
-        ${data.teams.B.players.map(p =>
-          `<div>#${p.number} ${p.name} - ⚽ ${goals[`B-${p.number}`] || 0}
-          <button onclick="addGoal('B','${p.number}')">+ but</button></div>`
-        ).join("")}
+
+        ${data.teams.B.players.map(p => `
+          <div>
+            #${p.number} ${p.name}
+            ⚽ ${goals[`B-${p.number}`] || 0}
+            <button onclick="addGoal('B','${p.number}')">+ but</button>
+          </div>
+        `).join("")}
+
       </div>
 
     </div>
