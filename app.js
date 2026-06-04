@@ -27,7 +27,7 @@ function selectSport(sport) {
   show("teams");
 }
 
-// COULEUR VIA TEXTE
+// COULEUR (TEXT BOX)
 function pickColor(team) {
   const color = prompt("Entrez une couleur hex (#3b82f6)");
   if (!color) return;
@@ -44,7 +44,9 @@ function pickColor(team) {
 
 // JOUEURS
 function isNumberUsed(team, number) {
-  return data.teams[team].players.some(p => Number(p.number) === Number(number));
+  return data.teams[team].players.some(
+    p => Number(p.number) === Number(number)
+  );
 }
 
 function addPlayer(team) {
@@ -76,6 +78,7 @@ function addPlayer(team) {
 }
 
 function renderPlayers() {
+
   document.getElementById("listA").innerHTML =
     data.teams.A.players.map(p =>
       `<li>#${p.number} - ${p.name}</li>`
@@ -87,7 +90,7 @@ function renderPlayers() {
     ).join("");
 }
 
-// VALIDATION
+// VALIDATION EQUIPES
 function goToTime() {
 
   if (data.teams.A.players.length < 7 || data.teams.B.players.length < 7) {
@@ -101,7 +104,7 @@ function goToTime() {
   show("time");
 }
 
-// MATCH
+// MATCH CONFIG
 function goToDashboard() {
 
   const periodTime = document.getElementById("periodTime").value;
@@ -123,7 +126,6 @@ function goToDashboard() {
 // CHRONO
 function start() {
   if (running) return;
-
   running = true;
 
   interval = setInterval(() => {
