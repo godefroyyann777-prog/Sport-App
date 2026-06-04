@@ -20,47 +20,37 @@ body {
   justify-content: center;
   align-items: center;
   height: 100%;
-  gap: 15px;
+  gap: 10px;
 }
 
 button {
   padding: 10px 20px;
-  border: none;
-  cursor: pointer;
   background: #2563eb;
+  border: none;
   color: white;
   border-radius: 8px;
+  cursor: pointer;
 }
 
-button:hover {
-  opacity: 0.9;
-}
-
-.teams {
+.teams-container {
   display: flex;
   justify-content: space-around;
   padding: 20px;
 }
 
-.team-card {
+.team {
   background: #111827;
   padding: 15px;
-  border-radius: 10px;
   width: 300px;
-}
-
-input {
-  width: 100%;
-  margin: 5px 0;
-  padding: 8px;
+  border-radius: 10px;
 }
 
 ul {
-  list-style: none;
   padding: 0;
+  list-style: none;
 }
 
-.start-btn {
+.validate {
   display: block;
   margin: 20px auto;
   background: #10b981;
