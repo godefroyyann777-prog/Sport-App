@@ -1,15 +1,33 @@
 let data = {
   sport: "",
   teams: {
-    A: { name: "", color: "#3b82f6", players: [] },
-    B: { name: "", color: "#ef4444", players: [] }
+    A: {
+      name: "",
+      color: "#3b82f6",
+      players: []
+    },
+    B: {
+      name: "",
+      color: "#ef4444",
+      players: []
+    }
   },
   match: {}
 };
 
+let chronoInterval = null;
+let currentTime = 0;
+let isRunning = false;
+
+// ------------------
 // NAVIGATION
+// ------------------
+
 function show(page) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".page").forEach(p => {
+    p.classList.remove("active");
+  });
+
   document.getElementById(page).classList.add("active");
 }
 
@@ -22,18 +40,30 @@ function selectSport(sport) {
   show("teams");
 }
 
-// PLAYERS
+// ------------------
+// JOUEURS
+// ------------------
+
 function addPlayer(team) {
+
   const nameInput = document.getElementById(`input${team}Name`);
   const numberInput = document.getElementById(`input${team}Number`);
 
-  const name = nameInput.value;
-  const number = numberInput.value;
+  const name = nameInput.value.trim();
+  const number = numberInput.value.trim();
 
-  if (!name) return;
+  if (!name) {
+    alert("Nom du joueur obligatoire");
+    return;
+  }
+
+  if (!number) {
+    alert("Numéro obligatoire");
+    return;
+  }
 
   if (data.teams[team].players.length >= 12) {
-    alert("Maximum 12 joueurs !");
+    alert("Maximum 12 joueurs");
     return;
   }
 
@@ -46,78 +76,228 @@ function addPlayer(team) {
   numberInput.value = "";
 
   renderPlayers();
-  updateTeamColors();
 }
 
-// RENDER PLAYERS
 function renderPlayers() {
+
   document.getElementById("listA").innerHTML =
-    data.teams.A.players.map(p => `<li>${p.name} (#${p.number || "-"})</li>`).join("");
+    data.teams.A.players.map(player =>
+      `<li>#${player.number} - ${player.name}</li>`
+    ).join("");
 
   document.getElementById("listB").innerHTML =
-    data.teams.B.players.map(p => `<li>${p.name} (#${p.number || "-"})</li>`).join("");
+    data.teams.B.players.map(player =>
+      `<li>#${player.number} - ${player.name}</li>`
+    ).join("");
 }
 
-// COLORS LIVE FULL BLOCK
-document.getElementById("teamAColor").addEventListener("input", e => {
-  data.teams.A.color = e.target.value;
-  updateTeamColors();
-});
-
-document.getElementById("teamBColor").addEventListener("input", e => {
-  data.teams.B.color = e.target.value;
-  updateTeamColors();
-});
+// ------------------
+// COULEURS
+// ------------------
 
 function updateTeamColors() {
-  document.getElementById("teamABox").style.background = data.teams.A.color;
-  document.getElementById("teamBBox").style.background = data.teams.B.color;
+
+  const boxA = document.getElementById("teamABox");
+  const boxB = document.getElementById("teamBBox");
+
+  if(boxA){
+    boxA.style.backgroundColor = data.teams.A.color;
+  }
+
+  if(boxB){
+    boxB.style.backgroundColor = data.teams.B.color;
+  }
 }
 
-// NAVIGATION FLOW
+// ------------------
+// VALIDATION EQUIPES
+// ------------------
+
 function goToTime() {
-  if (data.teams.A.players.length < 7 || data.teams.B.players.length < 7) {
-    alert("Minimum 7 joueurs par équipe !");
+
+  data.teams.A.name =
+    document.getElementById("teamAName").value || "Équipe A";
+
+  data.teams.B.name =
+    document.getElementById("teamBName").value || "Équipe B";
+
+  if (data.teams.A.players.length < 7 ||
+      data.teams.B.players.length < 7) {
+
+    alert("Minimum 7 joueurs par équipe");
     return;
   }
+
   show("time");
 }
 
-// MATCH SETTINGS
+// ------------------
+// DASHBOARD
+// ------------------
+
 function goToDashboard() {
+
+  const matchTime =
+    document.getElementById("matchTime").value;
+
+  const periodTime =
+    document.getElementById("periodTime").value;
+
+  const periodCount =
+    document.getElementById("periodCount").value;
+
+  if(!matchTime || !periodTime || !periodCount){
+    alert("Complète tous les champs");
+    return;
+  }
+
   data.match = {
-    matchTime: document.getElementById("matchTime").value,
-    periodTime: document.getElementById("periodTime").value,
-    periodCount: document.getElementById("periodCount").value
+    matchTime,
+    periodTime,
+    periodCount
   };
 
+  currentTime = parseInt(periodTime) * 60;
+
   show("dashboard");
+
   renderDashboard();
 }
 
-// DASHBOARD
-function renderDashboard() {
-  document.getElementById("display").innerHTML = `
-    <div style="display:flex; flex-wrap:wrap; gap:15px; padding:15px;">
+// ------------------
+// CHRONO
+// ------------------
 
-      <div style="flex:1; min-width:250px; background:${data.teams.A.color}; padding:10px; border-radius:10px;">
-        <h3>${data.teams.A.name || "Équipe A"}</h3>
-        ${data.teams.A.players.map(p => `<div>${p.name} (#${p.number || "-"})</div>`).join("")}
-      </div>
+function startChrono() {
 
-      <div style="flex:1; min-width:250px; background:${data.teams.B.color}; padding:10px; border-radius:10px;">
-        <h3>${data.teams.B.name || "Équipe B"}</h3>
-        ${data.teams.B.players.map(p => `<div>${p.name} (#${p.number || "-"})</div>`).join("")}
-      </div>
+  if(isRunning) return;
 
-    </div>
+  isRunning = true;
 
-    <div style="text-align:center;">
-      <p>⏱ Match: ${data.match.matchTime} min</p>
-      <p>🔁 Périodes: ${data.match.periodCount} × ${data.match.periodTime} min</p>
-    </div>
-  `;
+  chronoInterval = setInterval(() => {
+
+    if(currentTime > 0){
+
+      currentTime--;
+
+      updateChronoDisplay();
+
+    }
+
+  },1000);
 }
 
-// INIT COLORS
-updateTeamColors();
+function pauseChrono() {
+
+  clearInterval(chronoInterval);
+
+  isRunning = false;
+}
+
+function resetChrono() {
+
+  pauseChrono();
+
+  currentTime =
+    parseInt(data.match.periodTime) * 60;
+
+  updateChronoDisplay();
+}
+
+function updateChronoDisplay() {
+
+  const chrono =
+    document.getElementById("chrono");
+
+  if(!chrono) return;
+
+  const minutes =
+    Math.floor(currentTime / 60)
+      .toString()
+      .padStart(2,"0");
+
+  const seconds =
+    (currentTime % 60)
+      .toString()
+      .padStart(2,"0");
+
+  chrono.innerText =
+    `${minutes}:${seconds}`;
+}
+
+// ------------------
+// AFFICHAGE DASHBOARD
+// ------------------
+
+function renderDashboard() {
+
+  document.getElementById("display").innerHTML = `
+
+  <div class="chrono">
+    <span id="chrono">00:00</span>
+  </div>
+
+  <div class="chrono-buttons">
+    <button onclick="startChrono()">▶️ Démarrer</button>
+    <button onclick="pauseChrono()">⏸️ Pause</button>
+    <button onclick="resetChrono()">🔄 Reset</button>
+  </div>
+
+  <br>
+
+  <div class="dashboard-container">
+
+    <div class="team-dashboard"
+      style="background:${data.teams.A.color}">
+      <h3>${data.teams.A.name}</h3>
+
+      ${data.teams.A.players.map(player => `
+        <div>#${player.number} - ${player.name}</div>
+      `).join("")}
+
+    </div>
+
+    <div class="team-dashboard"
+      style="background:${data.teams.B.color}">
+      <h3>${data.teams.B.name}</h3>
+
+      ${data.teams.B.players.map(player => `
+        <div>#${player.number} - ${player.name}</div>
+      `).join("")}
+
+    </div>
+
+  </div>
+
+  <div style="text-align:center;margin-top:20px;">
+    <p>Match : ${data.match.matchTime} min</p>
+    <p>${data.match.periodCount} période(s)</p>
+    <p>${data.match.periodTime} min par période</p>
+  </div>
+  `;
+
+  updateChronoDisplay();
+}
+
+// ------------------
+// INITIALISATION
+// ------------------
+
+window.onload = () => {
+
+  document.getElementById("teamAColor")
+    .addEventListener("input", e => {
+
+      data.teams.A.color = e.target.value;
+      updateTeamColors();
+    });
+
+  document.getElementById("teamBColor")
+    .addEventListener("input", e => {
+
+      data.teams.B.color = e.target.value;
+      updateTeamColors();
+    });
+
+  updateTeamColors();
+};
