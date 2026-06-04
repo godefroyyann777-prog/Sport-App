@@ -27,21 +27,6 @@ function selectSport(sport) {
   show("teams");
 }
 
-// COULEUR (TEXT BOX)
-function pickColor(team) {
-  const color = prompt("Entrez une couleur hex (#3b82f6)");
-  if (!color) return;
-
-  data.teams[team].color = color;
-
-  const box = document.getElementById(
-    team === "A" ? "teamAColorBox" : "teamBColorBox"
-  );
-
-  box.style.background = color;
-  box.style.color = "white";
-}
-
 // JOUEURS
 function isNumberUsed(team, number) {
   return data.teams[team].players.some(
@@ -90,13 +75,19 @@ function renderPlayers() {
     ).join("");
 }
 
-// VALIDATION EQUIPES
-function goToTime() {
+// COULEURS (INPUT COLOR)
+document.getElementById("teamAColor").addEventListener("input", e => {
+  data.teams.A.color = e.target.value;
+  document.getElementById("teamABox").style.background = e.target.value;
+});
 
-  if (data.teams.A.players.length < 7 || data.teams.B.players.length < 7) {
-    alert("Minimum 7 joueurs");
-    return;
-  }
+document.getElementById("teamBColor").addEventListener("input", e => {
+  data.teams.B.color = e.target.value;
+  document.getElementById("teamBBox").style.background = e.target.value;
+});
+
+// SANS OBLIGATION JOUEURS
+function goToTime() {
 
   data.teams.A.name = document.getElementById("teamAName").value || "Équipe A";
   data.teams.B.name = document.getElementById("teamBName").value || "Équipe B";
@@ -104,7 +95,7 @@ function goToTime() {
   show("time");
 }
 
-// MATCH CONFIG
+// MATCH
 function goToDashboard() {
 
   const periodTime = document.getElementById("periodTime").value;
@@ -155,7 +146,7 @@ function updateChrono() {
   if (el) el.innerText = `${m}:${s}`;
 }
 
-// BUTS (UNIQUEMENT DASHBOARD)
+// BUTS UNIQUEMENT DASHBOARD
 function addGoal(team, number) {
   const key = `${team}-${number}`;
   goals[key] = (goals[key] || 0) + 1;
