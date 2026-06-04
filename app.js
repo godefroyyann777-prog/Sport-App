@@ -7,14 +7,12 @@ let data = {
   match: {}
 };
 
-let chronoInterval = null;
+let goals = {};
 let currentTime = 0;
-let isRunning = false;
+let interval = null;
+let running = false;
 
-// =====================
 // NAVIGATION
-// =====================
-
 function show(page) {
   document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
   document.getElementById(page).classList.add("active");
@@ -29,21 +27,15 @@ function selectSport(sport) {
   show("teams");
 }
 
-// =====================
-// PLAYERS + NUMEROS UNIQUES
-// =====================
-
+// PLAYERS
 function isNumberUsed(team, number) {
-  return data.teams[team].players.some(p => p.number == number);
+  return data.teams[team].players.some(p => Number(p.number) === Number(number));
 }
 
 function addPlayer(team) {
 
-  const nameInput = document.getElementById(`input${team}Name`);
-  const numberInput = document.getElementById(`input${team}Number`);
-
-  const name = nameInput.value.trim();
-  const number = numberInput.value.trim();
+  const name = document.getElementById(`input${team}Name`).value.trim();
+  const number = document.getElementById(`input${team}Number`).value.trim();
 
   if (!name || !number) {
     alert("Nom et numéro obligatoires");
@@ -51,95 +43,68 @@ function addPlayer(team) {
   }
 
   if (isNumberUsed(team, number)) {
-    alert("Ce numéro est déjà utilisé dans l'équipe");
+    alert("Numéro déjà utilisé");
     return;
   }
 
   if (data.teams[team].players.length >= 12) {
-    alert("Maximum 12 joueurs");
+    alert("Max 12 joueurs");
     return;
   }
 
   data.teams[team].players.push({ name, number });
 
-  nameInput.value = "";
-  numberInput.value = "";
+  document.getElementById(`input${team}Name`).value = "";
+  document.getElementById(`input${team}Number`).value = "";
 
   renderPlayers();
 }
 
-// =====================
-// AFFICHAGE JOUEURS
-// =====================
-
 function renderPlayers() {
-
   document.getElementById("listA").innerHTML =
-    data.teams.A.players.map(p =>
-      `<li>#${p.number} - ${p.name} <button onclick="addGoal('A',${p.number})">+1 but</button></li>`
-    ).join("");
+    data.teams.A.players.map(p => `<li>#${p.number} - ${p.name}</li>`).join("");
 
   document.getElementById("listB").innerHTML =
-    data.teams.B.players.map(p =>
-      `<li>#${p.number} - ${p.name} <button onclick="addGoal('B',${p.number})">+1 but</button></li>`
-    ).join("");
+    data.teams.B.players.map(p => `<li>#${p.number} - ${p.name}</li>`).join("");
 }
 
-// =====================
-// COULEURS
-// =====================
+// COLORS
+document.getElementById("teamAColor").addEventListener("input", e => {
+  data.teams.A.color = e.target.value;
+  document.getElementById("teamABox").style.background = data.teams.A.color;
+});
 
-function updateTeamColors() {
+document.getElementById("teamBColor").addEventListener("input", e => {
+  data.teams.B.color = e.target.value;
+  document.getElementById("teamBBox").style.background = data.teams.B.color;
+});
 
-  const a = document.getElementById("teamABox");
-  const b = document.getElementById("teamBBox");
-
-  if (a) a.style.backgroundColor = data.teams.A.color;
-  if (b) b.style.backgroundColor = data.teams.B.color;
-}
-
-// =====================
-// VALIDATION EQUIPES
-// =====================
-
+// VALIDATION
 function goToTime() {
 
-  data.teams.A.name =
-    document.getElementById("teamAName").value || "Équipe A";
-
-  data.teams.B.name =
-    document.getElementById("teamBName").value || "Équipe B";
-
-  if (data.teams.A.players.length < 7 ||
-      data.teams.B.players.length < 7) {
-    alert("Minimum 7 joueurs par équipe");
+  if (data.teams.A.players.length < 7 || data.teams.B.players.length < 7) {
+    alert("Minimum 7 joueurs");
     return;
   }
+
+  data.teams.A.name = document.getElementById("teamAName").value || "Équipe A";
+  data.teams.B.name = document.getElementById("teamBName").value || "Équipe B";
 
   show("time");
 }
 
-// =====================
-// MATCH CONFIG (SIMPLIFIÉ)
-// =====================
-
+// MATCH CONFIG
 function goToDashboard() {
 
-  const periodTime =
-    document.getElementById("periodTime").value;
-
-  const periodCount =
-    document.getElementById("periodCount").value;
+  const periodTime = document.getElementById("periodTime").value;
+  const periodCount = document.getElementById("periodCount").value;
 
   if (!periodTime || !periodCount) {
-    alert("Remplis tous les champs");
+    alert("Remplir tous les champs");
     return;
   }
 
-  data.match = {
-    periodTime,
-    periodCount
-  };
+  data.match = { periodTime, periodCount };
 
   currentTime = periodTime * 60;
 
@@ -147,130 +112,79 @@ function goToDashboard() {
   renderDashboard();
 }
 
-// =====================
 // CHRONO
-// =====================
+function start() {
+  if (running) return;
+  running = true;
 
-function startChrono() {
-  if (isRunning) return;
-
-  isRunning = true;
-
-  chronoInterval = setInterval(() => {
+  interval = setInterval(() => {
     if (currentTime > 0) {
       currentTime--;
-      updateChronoDisplay();
+      updateChrono();
     }
   }, 1000);
 }
 
-function pauseChrono() {
-  clearInterval(chronoInterval);
-  isRunning = false;
+function pause() {
+  clearInterval(interval);
+  running = false;
 }
 
-function resetChrono() {
-  pauseChrono();
+function reset() {
+  pause();
   currentTime = data.match.periodTime * 60;
-  updateChronoDisplay();
+  updateChrono();
 }
 
-function updateChronoDisplay() {
-  const el = document.getElementById("chrono");
-  if (!el) return;
-
+function updateChrono() {
   const m = String(Math.floor(currentTime / 60)).padStart(2, "0");
   const s = String(currentTime % 60).padStart(2, "0");
 
-  el.innerText = `${m}:${s}`;
+  const el = document.getElementById("chrono");
+  if (el) el.innerText = `${m}:${s}`;
 }
 
-// =====================
-// BUTS JOUEURS
-// =====================
-
-let goals = {};
-
+// GOALS
 function addGoal(team, number) {
-
   const key = `${team}-${number}`;
-
-  if (!goals[key]) goals[key] = 0;
-
-  goals[key]++;
-
-  alert(`But ajouté (#${number})`);
+  goals[key] = (goals[key] || 0) + 1;
   renderDashboard();
 }
 
-// =====================
 // DASHBOARD
-// =====================
-
 function renderDashboard() {
 
   document.getElementById("display").innerHTML = `
 
-    <div class="chrono">
-      <span id="chrono">00:00</span>
+    <div style="text-align:center;font-size:40px;" id="chrono">00:00</div>
+
+    <div style="text-align:center;margin:10px;">
+      <button onclick="start()">▶️ Start</button>
+      <button onclick="pause()">⏸️ Pause</button>
+      <button onclick="reset()">🔄 Reset</button>
     </div>
 
-    <div class="chrono-buttons">
-      <button onclick="startChrono()">▶️ Start</button>
-      <button onclick="pauseChrono()">⏸️ Pause</button>
-      <button onclick="resetChrono()">🔄 Reset</button>
-    </div>
+    <div style="display:flex;gap:15px;padding:10px;">
 
-    <hr>
-
-    <div class="dashboard-container">
-
-      <div class="team-dashboard" style="background:${data.teams.A.color}">
+      <div style="flex:1;background:${data.teams.A.color};padding:10px;border-radius:10px;">
         <h3>${data.teams.A.name}</h3>
-        ${data.teams.A.players.map(p => `
-          <div>
-            #${p.number} - ${p.name}
-            | ⚽ ${goals[`A-${p.number}`] || 0}
-          </div>
-        `).join("")}
+        ${data.teams.A.players.map(p =>
+          `<div>#${p.number} ${p.name} - ⚽ ${goals[`A-${p.number}`] || 0}
+          <button onclick="addGoal('A','${p.number}')">+ but</button></div>`
+        ).join("")}
       </div>
 
-      <div class="team-dashboard" style="background:${data.teams.B.color}">
+      <div style="flex:1;background:${data.teams.B.color};padding:10px;border-radius:10px;">
         <h3>${data.teams.B.name}</h3>
-        ${data.teams.B.players.map(p => `
-          <div>
-            #${p.number} - ${p.name}
-            | ⚽ ${goals[`B-${p.number}`] || 0}
-          </div>
-        `).join("")}
+        ${data.teams.B.players.map(p =>
+          `<div>#${p.number} ${p.name} - ⚽ ${goals[`B-${p.number}`] || 0}
+          <button onclick="addGoal('B','${p.number}')">+ but</button></div>`
+        ).join("")}
       </div>
 
     </div>
 
-    <div style="text-align:center;margin-top:15px;">
-      <p>${data.match.periodCount} période(s)</p>
-      <p>${data.match.periodTime} min / période</p>
-    </div>
   `;
 
-  updateChronoDisplay();
+  updateChrono();
 }
-
-// =====================
-// INIT
-// =====================
-
-window.onload = () => {
-
-  document.getElementById("teamAColor").addEventListener("input", e => {
-    data.teams.A.color = e.target.value;
-    updateTeamColors();
-  });
-
-  document.getElementById("teamBColor").addEventListener("input", e => {
-    data.teams.B.color = e.target.value;
-    updateTeamColors();
-  });
-
-  updateTeamColors();
-};
