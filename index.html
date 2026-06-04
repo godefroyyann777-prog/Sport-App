@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Handball Stats</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <h2>🏐 Stats HB</h2>
+
+    <button onclick="showPanel('players')">Joueurs</button>
+    <button onclick="showPanel('match')">Match</button>
+    <button onclick="showPanel('goal')">Défense</button>
+    <button onclick="exportPDF()">Exporter PDF</button>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+
+    <!-- PLAYERS -->
+    <div id="players" class="panel active">
+      <h1>Joueurs</h1>
+
+      <div class="card">
+        <input id="playerName" placeholder="Nom du joueur" />
+        <button onclick="addPlayer()">Ajouter</button>
+      </div>
+
+      <div id="playerList"></div>
+    </div>
+
+    <!-- MATCH -->
+    <div id="match" class="panel">
+      <h1>Match</h1>
+
+      <div class="card">
+        <select id="playerSelect"></select>
+
+        <button onclick="addStat('goal')">+ But</button>
+        <button onclick="addStat('shot')">+ Tir</button>
+        <button onclick="addStat('shotOnTarget')">+ Tir cadré</button>
+      </div>
+
+      <div id="statsDisplay"></div>
+    </div>
+
+    <!-- GOAL DEFENSE -->
+    <div id="goal" class="panel">
+      <h1>But encaissé</h1>
+
+      <div class="goal-area">
+        <div onclick="saveGoalZone('haut-gauche')"></div>
+        <div onclick="saveGoalZone('haut-centre')"></div>
+        <div onclick="saveGoalZone('haut-droite')"></div>
+
+        <div onclick="saveGoalZone('bas-gauche')"></div>
+        <div onclick="saveGoalZone('bas-centre')"></div>
+        <div onclick="saveGoalZone('bas-droite')"></div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
