@@ -2,82 +2,87 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Coach Stats</title>
+  <title>Coach App</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- PAGE ACCUEIL -->
+<!-- 1 ACCUEIL -->
 <div id="home" class="page active">
   <div class="center">
-    <h1>🏐 Coach Stats</h1>
+    <h1>🏐 Coach App</h1>
     <button onclick="goToSport()">Commencer</button>
   </div>
 </div>
 
-<!-- PAGE SPORT -->
+<!-- 2 SPORT -->
 <div id="sport" class="page">
-
   <div class="center">
     <h2>Choisir un sport</h2>
-
     <button onclick="selectSport('handball')">Handball</button>
-    <button disabled>Football (bientôt)</button>
+    <button disabled>Football</button>
   </div>
-
 </div>
 
-<!-- CONFIG HAND -->
-<div id="config" class="page">
+<!-- 3 EQUIPES -->
+<div id="teams" class="page">
 
-  <h2>Configuration Handball</h2>
+  <h2>Création des équipes</h2>
 
-  <div class="teams">
+  <div class="teams-container">
 
     <!-- TEAM A -->
-    <div class="team-card">
+    <div class="team">
       <h3>Équipe A</h3>
 
       <input id="teamAName" placeholder="Nom équipe A">
-
       <input type="color" id="teamAColor" value="#3b82f6">
 
-      <input id="teamAPlayer" placeholder="Ajouter joueur">
+      <input id="inputA" placeholder="Ajouter joueur">
       <button onclick="addPlayer('A')">Ajouter</button>
 
-      <ul id="teamAList"></ul>
+      <ul id="listA"></ul>
     </div>
 
     <!-- TEAM B -->
-    <div class="team-card">
+    <div class="team">
       <h3>Équipe B</h3>
 
       <input id="teamBName" placeholder="Nom équipe B">
-
       <input type="color" id="teamBColor" value="#ef4444">
 
-      <input id="teamBPlayer" placeholder="Ajouter joueur">
+      <input id="inputB" placeholder="Ajouter joueur">
       <button onclick="addPlayer('B')">Ajouter</button>
 
-      <ul id="teamBList"></ul>
+      <ul id="listB"></ul>
     </div>
 
   </div>
 
-  <button class="start-btn" onclick="startDashboard()">
-    Lancer le dashboard
-  </button>
+  <button class="validate" onclick="goToTime()">Valider</button>
 
 </div>
 
-<!-- DASHBOARD -->
+<!-- 4 TEMPS DE JEU -->
+<div id="time" class="page">
+
+  <div class="center">
+    <h2>Temps de jeu</h2>
+
+    <input id="matchTime" type="number" placeholder="Durée match (min)">
+    <input id="halfTime" type="number" placeholder="Durée mi-temps (min)">
+
+    <button onclick="goToDashboard()">Continuer</button>
+  </div>
+
+</div>
+
+<!-- 5 DASHBOARD -->
 <div id="dashboard" class="page">
+  <h2>📊 Dashboard</h2>
 
-  <h2>📊 Match Handball</h2>
-
-  <div id="teamsDisplay"></div>
-
+  <div id="display"></div>
 </div>
 
 <script src="app.js"></script>
