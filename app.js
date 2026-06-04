@@ -75,7 +75,7 @@ function renderPlayers() {
     ).join("");
 }
 
-// COULEURS (INPUT COLOR)
+// COULEURS INPUT
 document.getElementById("teamAColor").addEventListener("input", e => {
   data.teams.A.color = e.target.value;
   document.getElementById("teamABox").style.background = e.target.value;
@@ -86,11 +86,14 @@ document.getElementById("teamBColor").addEventListener("input", e => {
   document.getElementById("teamBBox").style.background = e.target.value;
 });
 
-// SANS OBLIGATION JOUEURS
+// PLUS DE CONTRAINTE 7 JOUEURS
 function goToTime() {
 
-  data.teams.A.name = document.getElementById("teamAName").value || "Équipe A";
-  data.teams.B.name = document.getElementById("teamBName").value || "Équipe B";
+  data.teams.A.name =
+    document.getElementById("teamAName").value || "Équipe A";
+
+  data.teams.B.name =
+    document.getElementById("teamBName").value || "Équipe B";
 
   show("time");
 }
@@ -146,7 +149,7 @@ function updateChrono() {
   if (el) el.innerText = `${m}:${s}`;
 }
 
-// BUTS UNIQUEMENT DASHBOARD
+// BUTS (dashboard uniquement)
 function addGoal(team, number) {
   const key = `${team}-${number}`;
   goals[key] = (goals[key] || 0) + 1;
