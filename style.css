@@ -7,51 +7,78 @@ body {
 
 .page {
   display: none;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .page.active {
   display: block;
 }
 
+/* CENTRE HOME */
 .center {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100%;
-  gap: 10px;
+  height: 100vh;
+  gap: 12px;
 }
 
+/* BUTTONS */
 button {
-  padding: 10px 20px;
-  background: #2563eb;
+  padding: 10px 16px;
   border: none;
-  color: white;
   border-radius: 8px;
+  background: #2563eb;
+  color: white;
   cursor: pointer;
 }
 
+/* TEAMS LAYOUT */
 .teams-container {
   display: flex;
-  justify-content: space-around;
+  gap: 15px;
   padding: 20px;
 }
 
+/* TEAM CARD */
 .team {
-  background: #111827;
+  flex: 1;
   padding: 15px;
-  width: 300px;
-  border-radius: 10px;
+  border-radius: 12px;
+  transition: 0.3s;
 }
 
+/* PLAYER FORM */
+.player-form {
+  display: flex;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+input {
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  margin: 4px 0;
+}
+
+/* LIST */
 ul {
-  padding: 0;
   list-style: none;
+  padding: 0;
 }
 
+/* VALIDATE */
 .validate {
   display: block;
   margin: 20px auto;
   background: #10b981;
+}
+
+/* RESPONSIVE MOBILE */
+@media (max-width: 768px) {
+  .teams-container {
+    flex-direction: column;
+  }
 }
